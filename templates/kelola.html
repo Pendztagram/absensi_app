@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Kelola Absensi{% endblock %}
+{% block body %}
+<div class="top">
+  <h1>Pengelolaan absensi</h1>
+  <a href="{{ url_for('logout') }}">Keluar</a>
+</div>
+<div class="card">
+  <form method="get" class="row">
+    <input name="q" value="{{ q }}" placeholder="Cari nama / bagian">
+    <input name="tgl" type="date" value="{{ tgl }}">
+    <button type="submit">Filter</button>
+  </form>
+  <p class="small">{{ rows|length }} data</p>
+  <table>
+    <thead><tr><th>Waktu</th><th>Status</th><th>Nama</th><th>Bagian</th><th>Outsourcing</th><th>GPS</th><th>Foto</th><th></th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td data-l="Waktu">{{ r.created_at }}</td>
+        <td data-l="Status">{{ r.status or '-' }}</td>
+        <td data-l="Nama">{{ r.nama }}</td>
+        <td data-l="Bagian">{{ r.bagian }}</td>
+        <td data-l="Outsourcing">{{ r.outsourcing }}</td>
+        <td data-l="GPS" class="small">{% if r.lat %}{{ r.lat }}, {{ r.lng }}{% else %}-{% endif %}</td>
+        <td data-l="Foto">{% if r.foto %}<img class="thumb" src="{{ r.foto }}" alt="foto" style="max-width:120px">{% else %}-{% endif %}</td>
+        <td data-l="Aksi">
+          <form method="post" action="{{ url_for('hapus', aid=r.id) }}" onsubmit="return confirm('Hapus data ini?')">
+            <button class="danger" type="submit">Hapus</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="8">Belum ada data.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
